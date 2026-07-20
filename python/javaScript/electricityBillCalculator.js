@@ -1,7 +1,5 @@
 const unitsConsumed = Number(prompt("Enter your Electricity Unit"))
 
-var electricityBillAmount = 0
-
 const SERVICE_CHARGE_LIMIT = 500
 const SERVICE_CHARGE_MIN_AMOUNT = 50
 const SERVICE_CHARGE_MAX_AMOUNT = 100
@@ -21,26 +19,31 @@ function getRatePerUnit(unitsConsumed) {
 }
 
 function calculateBill(unitsConsumed){
-    electricityBillAmount = unitsConsumed * getRatePerUnit(unitsConsumed)
+    return unitsConsumed * getRatePerUnit(unitsConsumed)
 }
 
 function getServiceCharge(electricityBillAmount){
     if (electricityBillAmount >= SERVICE_CHARGE_LIMIT){
-        electricityBillAmount += SERVICE_CHARGE_MAX_AMOUNT
         return SERVICE_CHARGE_MAX_AMOUNT
     }else{
-        electricityBillAmount += SERVICE_CHARGE_MIN_AMOUNT
         return SERVICE_CHARGE_MIN_AMOUNT
     }
 }
 
-function calculateDiscount(tempElectricityBillAmount){
-    const discount = tempElectricityBillAmount * (DISCOUNT_PERCENTAGE/100)
-    electricityBillAmount = tempElectricityBillAmount - discount
+function calculateDiscount(bill){
+    const discount = bill * (DISCOUNT_PERCENTAGE/100)
     return discount
 }
 
-calculateBill(unitsConsumed)
+function calculateFinalBill(amount, discount){
+    return amount - discount
+}
+
+const bill = calculateBill(unitsConsumed)
+const serviceChargeBill = getServiceCharge(bill)
+const initialAmount = bill + serviceChargeBill
+const discountAmount = initialAmount >= DISCOUNT_LIMIT ? calculateDiscount(initialAmount) : 0;
+const finalBill = calculateFinalBill(initialAmount, discountAmount)
 
 console.log(`
 =========== Electricity Bill ===========
@@ -49,13 +52,13 @@ Units Consumed : ${unitsConsumed}
 
 Rate Per Unit  : ₹${getRatePerUnit(unitsConsumed)}
 
-Bill Amount    : ₹${electricityBillAmount}
+Bill Amount    : ₹${bill}
 
-Service Charge : ₹${getServiceCharge(electricityBillAmount)}
+Service Charge : ₹${serviceChargeBill}
 
-Green Discount : ₹${ (electricityBillAmount >= DISCOUNT_LIMIT ? calculateDiscount(electricityBillAmount) : 0)}
+Green Discount : ₹${discountAmount}
 
-Final Bill     : ₹${electricityBillAmount}
+Final Bill     : ₹${finalBill}
 
 ========================================
     `)
