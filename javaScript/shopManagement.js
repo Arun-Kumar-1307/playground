@@ -52,6 +52,9 @@ switch(choice){
     case 7:
         shopSummary()
         break
+    case 8:
+        console.log("Thank you...");
+        break;
     default:
         console.log("invalid choice")
 }
@@ -92,7 +95,7 @@ function updateOwner(){
 }
 
 function validatePhoneNumber(number){
-    return String(number.length) === 10
+    return String(number.length) == 10
 }
 
 function updatePhoneNumber(){
