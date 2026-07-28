@@ -148,8 +148,6 @@ function getTotalPrice(){
 }
 
 function calculateTotal(){
-    
-
     console.log(`Total : ₹${getTotalPrice()}`)
 }
 
