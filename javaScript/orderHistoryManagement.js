@@ -65,13 +65,13 @@ do {
         structureOrderById()
         break
     case 3:
-        console.log("this ")
+        getProductByName()
         break
     case 4:
-        console.log("this ")
+        isOrderDelivered()
         break
     case 5:
-        console.log("this ")
+        createDashboard()
         break
     case 6:
         console.log("Thank You.....")
@@ -99,14 +99,28 @@ Order Total : ₹${getTotal(product.products)}
     });
 }
 
-function getProductById(value,orderId){
-    const order = orders.find(order => order.orderId === value)
-    return order
+function getProductByKey(value, key) {
+  const order = orders.find(order => {
+    let result = order;
+
+    for (const char of key.split(".")) {
+      result = result?.[char];
+    }
+    if (typeof result === "string") {
+
+        return String(result).toLowerCase() === value;
+    }
+    else{
+        return result === value
+    }
+  });
+
+  return order;
 }
 
 function structureOrderById(){
     const id = Number(prompt("Enter order ID"))
-    const order = getProductById(id, 'orderId')
+    const order = getProductByKey(id, 'orderId')
     if (order){
         console.log(`
 Order ID : ${order.orderId}
@@ -125,10 +139,6 @@ Order Total : ₹${getTotal(order.products)}
     }
 }
 
-function getProdutByIndex(index){
-    return 
-}
-
 function getProduct(products){
     return products.map(product=>`
 ${product.name}
@@ -145,5 +155,85 @@ function getTotal(products){
 }
 
 function getProductByName(){
-    
+    let name = prompt("Enter Customer Name")
+    let tempName = name.toLowerCase()
+    if(validateInput(tempName)){
+        const order = getProductByKey(tempName,'customer.name')
+        if(order){
+            console.log(`
+Order ID : ${order.orderId}
+
+Customer : ${order.customer.name}
+
+Status : ${order.delivered}
+
+Products
+${getProduct(order.products)}
+
+Order Total : ₹${getTotal(order.products)}
+            `)
+        }else{
+            console.log("Customer not found.")
+        }
+    }else{
+        console.log("Name should not be empty")
+    }
+}
+
+function validateInput(input){
+    return input !==null && String(input).trim() !==""
+}
+
+function findProductByInder(input){
+    return orders.findIndex(order => order.orderId === input)
+}
+
+function isOrderDelivered(){
+    const id = Number(prompt("Enter ID"))
+    const order  = getProductByKey(id,'orderId')
+        if(order.delivered){
+            console.log("Order already delivered.")
+        }else{
+            const index = findProductByInder(id)
+            orders[index].delivered = true
+            console.log("Order marked as delivered.")
+        }
+}
+
+function createDashboard(){
+    const orderCount = orders.length
+    let deliveredOrders = 0 
+    let pendingOrders = 0
+    orders.forEach(product =>{
+        if (product.delivered){
+            deliveredOrders += 1
+        }else{
+            pendingOrders +=1
+        }
+    })
+    console.log(`
+========== DASHBOARD ==========
+
+Total Orders : ${orderCount}
+
+Delivered Orders : ${deliveredOrders}
+
+Pending Orders : ${pendingOrders}
+
+Total Revenue : ₹${getOverallTotal()}
+
+===============================
+        `)
+}
+
+function getOverallTotal(){
+
+    let price = 0
+
+    orders.forEach(product =>{
+        product.products.forEach(order=>{
+            price += order.price * order.quantity
+        })
+    })
+    return price
 }
