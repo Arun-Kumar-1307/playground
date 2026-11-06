@@ -1,0 +1,18 @@
+# Ignore extensionless executables at any depth.
+# Keep directories traversable and files with extensions visible.
+*
+!*/
+!*.*
+
+# Common compiled outputs at any depth.
+*.out
+*.exe
+*.o
+*.obj
+*.a
+*.lib
+*.so
+*.so.*
+*.dylib
+*.dll
+*.dSYM/
